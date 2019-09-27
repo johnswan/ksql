@@ -71,6 +71,10 @@ public final class CreateSourceAsProperties {
     return Optional.ofNullable(props.getString(CommonCreateConfigs.KAFKA_TOPIC_NAME_PROPERTY));
   }
 
+  public Optional<String> getApplicationId() {
+    return Optional.ofNullable(props.getString(CommonCreateConfigs.APPLICATION_ID_PROPERTY));
+  }
+
   public Optional<Integer> getPartitions() {
     return Optional.ofNullable(props.getInt(CommonCreateConfigs.SOURCE_NUMBER_OF_PARTITIONS));
   }
@@ -104,12 +108,14 @@ public final class CreateSourceAsProperties {
   public CreateSourceAsProperties withTopic(
       final String name,
       final int partitions,
-      final short replicas
+      final short replicas,
+      final String applicationId
   ) {
     final Map<String, Literal> originals = props.copyOfOriginalLiterals();
     originals.put(CommonCreateConfigs.KAFKA_TOPIC_NAME_PROPERTY, new StringLiteral(name));
     originals.put(CommonCreateConfigs.SOURCE_NUMBER_OF_PARTITIONS, new IntegerLiteral(partitions));
     originals.put(CommonCreateConfigs.SOURCE_NUMBER_OF_REPLICAS, new IntegerLiteral(replicas));
+    originals.put(CommonCreateConfigs.APPLICATION_ID_PROPERTY, new StringLiteral(applicationId));
 
     return new CreateSourceAsProperties(originals);
   }

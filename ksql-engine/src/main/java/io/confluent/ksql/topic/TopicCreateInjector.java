@@ -124,7 +124,8 @@ public class TopicCreateInjector implements Injector {
         .withWithClause(
             Optional.of(properties.getKafkaTopic()),
             properties.getPartitions(),
-            properties.getReplicas());
+            properties.getReplicas(),
+            properties.getApplicationId());
 
     createTopic(topicPropertiesBuilder, statement, createSource instanceof CreateTable);
 
@@ -155,7 +156,8 @@ public class TopicCreateInjector implements Injector {
         .withWithClause(
             properties.getKafkaTopic(),
             properties.getPartitions(),
-            properties.getReplicas());
+            properties.getReplicas(),
+            properties.getApplicationId());
 
     final boolean shouldCompactTopic = createAsSelect instanceof CreateTableAsSelect
         && !createAsSelect.getQuery().getWindow().isPresent();
@@ -165,7 +167,8 @@ public class TopicCreateInjector implements Injector {
     final T withTopic = (T) createAsSelect.copyWith(properties.withTopic(
         info.getTopicName(),
         info.getPartitions(),
-        info.getReplicas()
+        info.getReplicas(),
+        info.getApplicationId()
     ));
 
     final String withTopicText = SqlFormatter.formatSql(withTopic) + ";";

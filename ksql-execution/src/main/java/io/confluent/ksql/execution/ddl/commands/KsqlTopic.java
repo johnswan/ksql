@@ -28,6 +28,7 @@ public class KsqlTopic {
   private final KeyFormat keyFormat;
   private final ValueFormat valueFormat;
   private final boolean isKsqlSink;
+  private final String applicationId;
 
   public KsqlTopic(
       final String kafkaTopicName,
@@ -39,6 +40,21 @@ public class KsqlTopic {
     this.keyFormat = requireNonNull(keyFormat, "keyFormat");
     this.valueFormat = requireNonNull(valueFormat, "valueFormat");
     this.isKsqlSink = isKsqlSink;
+    this.applicationId = "";
+  }
+
+  public KsqlTopic(
+          final String kafkaTopicName,
+          final KeyFormat keyFormat,
+          final ValueFormat valueFormat,
+          final boolean isKsqlSink,
+          final String applicationId
+  ) {
+    this.kafkaTopicName = requireNonNull(kafkaTopicName, "kafkaTopicName");
+    this.keyFormat = requireNonNull(keyFormat, "keyFormat");
+    this.valueFormat = requireNonNull(valueFormat, "valueFormat");
+    this.isKsqlSink = isKsqlSink;
+    this.applicationId = requireNonNull(applicationId, "applicationId");
   }
 
   public KeyFormat getKeyFormat() {
@@ -56,4 +72,9 @@ public class KsqlTopic {
   public boolean isKsqlSink() {
     return isKsqlSink;
   }
+
+  public String getApplicationId() {
+    return applicationId;
+  }
+
 }

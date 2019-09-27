@@ -183,6 +183,9 @@ class Analyzer {
       final String topicName = sink.getProperties().getKafkaTopic()
           .orElseGet(() -> topicPrefix + sink.getName().name());
 
+      final String applicationId = sink.getProperties().getApplicationId()
+              .orElse("");
+
       final KeyFormat keyFormat = buildKeyFormat();
 
       final ValueFormat valueFormat = ValueFormat.of(FormatInfo.of(

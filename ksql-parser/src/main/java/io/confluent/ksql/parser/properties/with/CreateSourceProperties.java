@@ -83,6 +83,10 @@ public final class CreateSourceProperties {
     return Optional.ofNullable(props.getShort(CommonCreateConfigs.SOURCE_NUMBER_OF_REPLICAS));
   }
 
+  public Optional<String> getApplicationId() {
+    return Optional.ofNullable(props.getString(CommonCreateConfigs.APPLICATION_ID_PROPERTY));
+  }
+
   public Optional<String> getKeyField() {
     return Optional.ofNullable(props.getString(CreateConfigs.KEY_NAME_PROPERTY));
   }

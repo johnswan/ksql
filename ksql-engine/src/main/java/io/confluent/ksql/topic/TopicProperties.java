@@ -42,6 +42,7 @@ public final class TopicProperties {
   private final String topicName;
   private final Integer partitions;
   private final Short replicas;
+  private final String applicationId;
 
   @VisibleForTesting
   TopicProperties(
@@ -52,6 +53,19 @@ public final class TopicProperties {
     this.topicName = topicName;
     this.partitions = partitions;
     this.replicas = replicas;
+    this.applicationId = "";
+  }
+
+  TopicProperties(
+      final String topicName,
+      final Integer partitions,
+      final Short replicas,
+      final String applicationId
+  ) {
+    this.topicName = topicName;
+    this.partitions = partitions;
+    this.replicas = replicas;
+    this.applicationId = applicationId;
   }
 
   @Override
@@ -59,6 +73,7 @@ public final class TopicProperties {
     return "TopicProperties{" + "topicName='" + getTopicName() + '\''
         + ", partitions=" + getPartitions()
         + ", replicas=" + getReplicas()
+        + ", applicationId=" + getApplicationId()
         + '}';
   }
 
@@ -72,6 +87,10 @@ public final class TopicProperties {
 
   public short getReplicas() {
     return replicas == null ? DEFAULT_REPLICAS : replicas;
+  }
+
+  public String getApplicationId() {
+    return applicationId == null ? "" : applicationId;
   }
 
   /**
@@ -94,10 +113,11 @@ public final class TopicProperties {
   public static final class Builder {
 
     private String name;
-    private TopicProperties fromWithClause = new TopicProperties(null, null, null);
-    private TopicProperties fromOverrides = new TopicProperties(null, null, null);
-    private TopicProperties fromKsqlConfig = new TopicProperties(null, null, null);
-    private Supplier<TopicProperties> fromSource = () -> new TopicProperties(null, null, null);
+    private TopicProperties fromWithClause = new TopicProperties(null, null, null, null);
+    private TopicProperties fromOverrides = new TopicProperties(null, null, null, null);
+    private TopicProperties fromKsqlConfig = new TopicProperties(null, null, null, null);
+    private Supplier<TopicProperties> fromSource = () -> new TopicProperties(null, null,
+                                                                            null, null);
 
     Builder withName(final String name) {
       this.name = name;
@@ -117,6 +137,21 @@ public final class TopicProperties {
       return this;
     }
 
+    Builder withWithClause(
+        final Optional<String> name,
+        final Optional<Integer> partitionCount,
+        final Optional<Short> replicationFactor,
+        final Optional<String> applicationId
+    ) {
+      fromWithClause = new TopicProperties(
+          name.orElse(null),
+          partitionCount.orElse(null),
+          replicationFactor.orElse(null),
+          applicationId.orElse(null)
+      );
+      return this;
+    }
+
     Builder withOverrides(final Map<String, Object> overrides) {
       final Integer partitions = parsePartitionsOverride(
           overrides.get(KsqlConfig.SINK_NUMBER_OF_PARTITIONS_PROPERTY));
@@ -124,7 +159,7 @@ public final class TopicProperties {
       final Short replicas = parseReplicasOverride(
           overrides.get(KsqlConfig.SINK_NUMBER_OF_REPLICAS_PROPERTY));
 
-      fromOverrides = new TopicProperties(null, partitions, replicas);
+      fromOverrides = new TopicProperties(null, partitions, replicas, null);
       return this;
     }
 
@@ -141,7 +176,7 @@ public final class TopicProperties {
         replicas = config.getShort(KsqlConfig.SINK_NUMBER_OF_REPLICAS_PROPERTY);
       }
 
-      fromKsqlConfig = new TopicProperties(null, partitions, replicas);
+      fromKsqlConfig = new TopicProperties(null, partitions, replicas, null);
       return this;
     }
 
@@ -151,7 +186,7 @@ public final class TopicProperties {
         final Integer partitions = description.partitions().size();
         final Short replicas = (short) description.partitions().get(0).replicas().size();
 
-        return new TopicProperties(null, partitions, replicas);
+        return new TopicProperties(null, partitions, replicas, null);
       });
       return this;
     }
@@ -164,6 +199,8 @@ public final class TopicProperties {
       if (StringUtils.strip(name).isEmpty()) {
         throw new KsqlException("Must have non-empty topic name.");
       }
+
+      final String applicationId = ObjectUtils.firstNonNull(fromWithClause.applicationId, "");
 
       final Integer partitions = Stream.of(
           fromWithClause.partitions,
@@ -184,7 +221,7 @@ public final class TopicProperties {
           .findFirst()
           .orElseGet(() -> fromSource.get().replicas);
 
-      return new TopicProperties(name, partitions, replicas);
+      return new TopicProperties(name, partitions, replicas, applicationId);
     }
   }
 

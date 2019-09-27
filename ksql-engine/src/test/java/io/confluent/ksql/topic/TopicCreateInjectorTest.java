@@ -145,7 +145,7 @@ public class TopicCreateInjectorTest {
     when(builder.withOverrides(any())).thenReturn(builder);
     when(builder.withKsqlConfig(any())).thenReturn(builder);
     when(builder.withSource(any())).thenReturn(builder);
-    when(builder.build()).thenReturn(new TopicProperties("name", 1, (short) 1));
+    when(builder.build()).thenReturn(new TopicProperties("name", 1, (short) 1, "applicationid"));
   }
 
   @Test

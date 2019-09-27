@@ -40,6 +40,9 @@ public final class CommonCreateConfigs {
   public static final String VALUE_AVRO_SCHEMA_FULL_NAME = "VALUE_AVRO_SCHEMA_FULL_NAME";
   public static final String VALUE_FORMAT_PROPERTY = "VALUE_FORMAT";
   public static final String WRAP_SINGLE_VALUE = "WRAP_SINGLE_VALUE";
+  
+    // Streams Props:
+  public static final String APPLICATION_ID_PROPERTY = "APPLICATION_ID";
 
   public static final String VALUE_DELIMITER_PROPERTY = "VALUE_DELIMITER";
 
@@ -114,6 +117,14 @@ public final class CommonCreateConfigs {
                 + "only a single field.  If set to true, KSQL expects the field to have been "
                 + "serialized as a named field within a record. If set to false, KSQL expects the "
                 + "field to have been serialized as an anonymous value."
+        )
+        .define(
+            APPLICATION_ID_PROPERTY,
+            ConfigDef.Type.STRING,
+            null,
+            Importance.LOW,
+            "The application_id used for the underlying Kafka Streams app. If "
+                + "supplied, any existing offsets will be used. "
         )
         .define(
             VALUE_AVRO_SCHEMA_FULL_NAME,
